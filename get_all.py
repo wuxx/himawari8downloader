@@ -23,13 +23,13 @@ def usage():
     sys.exit(0)
 
 # Convert time
-def utf2local(utc):
+def utc2local(utc):
     from_zone = tz.tzutc()
     to_zone = tz.tzlocal()
     utc = utc.replace(tzinfo=from_zone)
     return utc.astimezone(to_zone)
 
-def local2utf(local):
+def local2utc(local):
     from_zone = tz.tzlocal()
     to_zone   = tz.tzutc()
     return local.replace(tzinfo=from_zone).astimezone(to_zone)
@@ -82,13 +82,13 @@ def get_last_image(args):
 
     args['dirpath'] = dirpath
 
-    utftime   = args['time'].strftime("%Y/%m/%d/%H%M%S").replace('/', '')
-    localtime = utf2local(args['time']).strftime("%Y/%m/%d/%H%M%S").replace('/', '')
+    utctime   = args['time'].strftime("%Y/%m/%d/%H%M%S").replace('/', '')
+    localtime = utc2local(args['time']).strftime("%Y/%m/%d/%H%M%S").replace('/', '')
 
     filepath = "%s/%s.png" % (args['dirpath'], localtime)
     args['filepath'] = filepath
 
-    print "last_refresh_time: utf: %s; local: %s" %(utftime, localtime)
+    print "last_refresh_time: utc: %s; local: %s" %(utctime, localtime)
 
     if os.path.exists(args['filepath']):
         print "%s already exist. " % args['filepath']
@@ -100,30 +100,30 @@ def get_last_image(args):
         print "%s end" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 if __name__ == '__main__':
-    last_utftime = get_last_time();
-    print last_utftime
-    localtime = utf2local(last_utftime)
-    print localtime
+    last_utctime = get_last_time();
+    print "last_utctime: %s" % last_utctime
+    localtime = utc2local(last_utctime)
+    #print localtime
 
-    print datetime.now()
-    print ((datetime.now()-timedelta(minutes=0)).strftime("%Y-%m-%d %H:%M"))
-    print ((datetime.now()-timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M"))
-    print "\n"
-    print ((localtime-timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M"))
+    #print datetime.now()
+    #print ((datetime.now()-timedelta(minutes=0)).strftime("%Y-%m-%d %H:%M"))
+    #print ((datetime.now()-timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M"))
+    #print "\n"
+    #print ((localtime-timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M"))
 
-    print local2utf(localtime-timedelta(minutes=10))
+    #print local2utc(localtime-timedelta(minutes=10))
 
     local_start = datetime(localtime.year, localtime.month, localtime.day, 0, 0, 0)
     local_time  = datetime(localtime.year, localtime.month, localtime.day, 
                            localtime.hour, localtime.minute, localtime.second)
-    print local_time
-    print local_start
-    print (local_time - local_start).seconds
+    #print local_time
+    #print local_start
+    #print (local_time - local_start).seconds
     count = ((local_time - local_start).seconds / (60 * 10)) + 1 #every 10 mins
     for i in range (count):
         local_time = ((localtime-timedelta(minutes=(10 * i))).strftime("%Y-%m-%d %H:%M:%S"))
-        utf_time   = local2utf(localtime-timedelta(minutes=(10 * i))).strftime("%Y-%m-%d %H:%M:%S")
-        print "%s %s " % (local_time, utf_time)
-        os.system("python himawari8downloader.py -s 1 -t \"%s\"" % (utf_time));
+        utc_time   = local2utc(localtime-timedelta(minutes=(10 * i))).strftime("%Y-%m-%d %H:%M:%S")
+        print "local_time: [%s]; utc_time: [%s];" % (local_time, utc_time)
+        os.system("python himawari8downloader.py -s 1 -t \"%s\"" % (utc_time));
 
     #print (localtime-datetime.timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M")

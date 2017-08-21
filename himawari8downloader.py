@@ -61,13 +61,13 @@ def get_last_time():
 
 
 def get_last_image(args):
-    print "scale: %d" % args['scale']
     cwd = os.getcwd()
     localdate = time.strftime("%Y%m%d", time.localtime())
     print "cwd: %s; localdate: %s " % (cwd, localdate)
     dirpath = "%s/%s" %(cwd, localdate)
     if os.path.exists(dirpath):
-        print "dirpath %s already created." % dirpath
+        pass
+        #print "dirpath %s already created." % dirpath
     else:
         print "path not exist."
         os.mkdir(dirpath)
@@ -76,7 +76,6 @@ def get_last_image(args):
         args['time'] = get_last_time()
 
     #print "last_refresh_time utc: %s; time local: %s" % (args['time'], time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-
 
     args['dirpath'] = dirpath
 
@@ -93,9 +92,9 @@ def get_last_image(args):
     else:
         print 'output[%s] scale[%d]' %(args['filepath'], args['scale'])
 
-        print "%s start" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print "########################%s start" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         download(args)
-        print "%s end" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print "########################%s end" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 
 if __name__ == '__main__':
@@ -112,5 +111,5 @@ if __name__ == '__main__':
     except getopt.GetoptError:
         usage()        
 
-    print args
+    #print args
     get_last_image(args)
