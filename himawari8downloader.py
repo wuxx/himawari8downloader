@@ -22,6 +22,11 @@ def utf2local(utc):
     utc = utc.replace(tzinfo=from_zone)
     return utc.astimezone(to_zone)
 
+def local2utf(local):
+    from_zone = tz.tzlocal()
+    to_zone   = tz.tzutc()
+    return local.replace(tzinfo=from_zone).astimezone(to_zone)
+
 
 def download(args):
     scale = args['scale']
@@ -49,6 +54,7 @@ def get_last_time():
 
 
 def get_last_image(scale=16):
+    print "scale: %d" % scale
     cwd = os.getcwd()
     localdate = time.strftime("%Y%m%d", time.localtime())
     print "cwd: %s; localdate: %s " % (cwd, localdate)
@@ -61,6 +67,9 @@ def get_last_image(scale=16):
 
 
     last_refresh_time = get_last_time()
+
+    print "last_refresh_time utc: %s; time local: %s" % (last_refresh_time, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+
     args = {'time': last_refresh_time}
     args['dirpath'] = dirpath
 
@@ -77,13 +86,14 @@ def get_last_image(scale=16):
         print "%s already exist. " % args['filepath']
     else:
         print 'output[%s] scale[%i]' %(args['filepath'], scale)
+
+        print "%s start" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         download(args)
+        print "%s end" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         get_last_image()
     elif len(sys.argv) == 2:
-        get_last_image()
-    elif len(sys.argv) == 3:
-        get_last_image(scale=int(sys.argv[2]))
+        get_last_image(scale=int(sys.argv[1]))
