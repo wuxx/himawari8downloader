@@ -6,7 +6,7 @@ import json
 import requests
 from PIL import Image
 from io import BytesIO
-from datetime import datetime
+from datetime import datetime,timedelta
 from dateutil import tz
 
 conf ={
@@ -55,7 +55,7 @@ def download(args):
 def get_last_time():
     r = requests.get(conf['last_refresh_url'])
     resp = json.loads(r.text)
-    print "resp date: [%s]" % resp['date']
+    print "resp date: %s" % resp['date']
     last_refresh_time = datetime.strptime(resp['date'], '%Y-%m-%d %H:%M:%S')
     return last_refresh_time
 
@@ -71,6 +71,7 @@ def get_last_image(args):
     else:
         print "path not exist."
         os.mkdir(dirpath)
+
 
     last_refresh_time = get_last_time()
 
@@ -98,20 +99,31 @@ def get_last_image(args):
         download(args)
         print "%s end" % time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-
 if __name__ == '__main__':
-    args = {'scale': 1}
-    try:
-        options, arguments = getopt.getopt(sys.argv[1:], "hs:t:", ['help', "scale=", "time="])
-        for name, value in options:
-            if name in ('-h', '--help'):
-                usage()
-            elif name in ('-s', '--scale'):
-                args['scale'] = int(value)
-            elif name in ('-t', '--time'):
-                args['time']  = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-    except getopt.GetoptError:
-        usage()        
+    last_utftime = get_last_time();
+    print last_utftime
+    localtime = utf2local(last_utftime)
+    print localtime
 
-    print args
-    get_last_image(args)
+    print datetime.now()
+    print ((datetime.now()-timedelta(minutes=0)).strftime("%Y-%m-%d %H:%M"))
+    print ((datetime.now()-timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M"))
+    print "\n"
+    print ((localtime-timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M"))
+
+    print local2utf(localtime-timedelta(minutes=10))
+
+    local_start = datetime(localtime.year, localtime.month, localtime.day, 0, 0, 0)
+    local_time  = datetime(localtime.year, localtime.month, localtime.day, 
+                           localtime.hour, localtime.minute, localtime.second)
+    print local_time
+    print local_start
+    print (local_time - local_start).seconds
+    count = ((local_time - local_start).seconds / (60 * 10)) + 1 #every 10 mins
+    for i in range (count):
+        local_time = ((localtime-timedelta(minutes=(10 * i))).strftime("%Y-%m-%d %H:%M:%S"))
+        utf_time   = local2utf(localtime-timedelta(minutes=(10 * i))).strftime("%Y-%m-%d %H:%M:%S")
+        print "%s %s " % (local_time, utf_time)
+        os.system("python himawari8downloader.py -s 1 -t \"%s\"" % (utf_time));
+
+    #print (localtime-datetime.timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M")
