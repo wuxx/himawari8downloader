@@ -23,13 +23,13 @@ def usage():
     sys.exit(0)
 
 # Convert time
-def utf2local(utc):
+def utc2local(utc):
     from_zone = tz.tzutc()
     to_zone = tz.tzlocal()
     utc = utc.replace(tzinfo=from_zone)
     return utc.astimezone(to_zone)
 
-def local2utf(local):
+def local2utc(local):
     from_zone = tz.tzlocal()
     to_zone   = tz.tzutc()
     return local.replace(tzinfo=from_zone).astimezone(to_zone)
@@ -72,22 +72,21 @@ def get_last_image(args):
         print "path not exist."
         os.mkdir(dirpath)
 
-    last_refresh_time = get_last_time()
-
-    print "last_refresh_time utc: %s; time local: %s" % (last_refresh_time, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-
     if not args.has_key('time'):
-        args['time'] = last_refresh_time
+        args['time'] = get_last_time()
+
+    #print "last_refresh_time utc: %s; time local: %s" % (args['time'], time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+
 
     args['dirpath'] = dirpath
 
-    utftime   = args['time'].strftime("%Y/%m/%d/%H%M%S").replace('/', '')
-    localtime = utf2local(args['time']).strftime("%Y/%m/%d/%H%M%S").replace('/', '')
+    utctime   = args['time'].strftime("%Y/%m/%d/%H%M%S").replace('/', '')
+    localtime = utc2local(args['time']).strftime("%Y/%m/%d/%H%M%S").replace('/', '')
 
     filepath = "%s/%s.png" % (args['dirpath'], localtime)
     args['filepath'] = filepath
 
-    print "last_refresh_time: utf: %s; local: %s" %(utftime, localtime)
+    print "last_refresh_time: utc: %s; local: %s" %(utctime, localtime)
 
     if os.path.exists(args['filepath']):
         print "%s already exist. " % args['filepath']
