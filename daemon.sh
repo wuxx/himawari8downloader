@@ -5,6 +5,7 @@
 #exit: killall -g daemon.sh
 
 while [ 1 ]; do
-    python himawari8downloader.py
-    sleep 60 # 5 min
+    #python himawari8downloader.py
+    python get_all.py
+    sleep 300 # 5 min
 done

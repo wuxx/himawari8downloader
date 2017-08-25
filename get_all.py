@@ -124,6 +124,7 @@ if __name__ == '__main__':
         local_time = ((localtime-timedelta(minutes=(10 * i))).strftime("%Y-%m-%d %H:%M:%S"))
         utc_time   = local2utc(localtime-timedelta(minutes=(10 * i))).strftime("%Y-%m-%d %H:%M:%S")
         print "local_time: [%s]; utc_time: [%s];" % (local_time, utc_time)
-        os.system("python himawari8downloader.py -s 1 -t \"%s\"" % (utc_time));
+        ret = os.system("timeout 120 python himawari8downloader.py -s 1 -t \"%s\"" % (utc_time));
+        print "ret %d" % ret
 
     #print (localtime-datetime.timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M")
