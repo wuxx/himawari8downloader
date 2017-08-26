@@ -64,7 +64,7 @@ def get_last_image(args):
     cwd = os.getcwd()
     localdate = time.strftime("%Y%m%d", time.localtime())
     print "cwd: %s; localdate: %s " % (cwd, localdate)
-    dirpath = "%s/%s" %(cwd, localdate)
+    dirpath = "%s/%s_%s" %(cwd, localdate, args['scale'])
     if os.path.exists(dirpath):
         pass
         #print "dirpath %s already created." % dirpath
